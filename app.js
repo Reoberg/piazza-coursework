@@ -9,6 +9,9 @@ require('dotenv/config')
 app.use(bodyParser.json())
 
 const authRoute = require('./routes/auth')
+const postsRoute = require('./routes/posts')
+
+app.use('/api/post',postsRoute)
 app.use('/api/user',authRoute);
 mongoose.connect(process.env.DB_CONNECTOR).then(r => {
     console.log("Database running!!")

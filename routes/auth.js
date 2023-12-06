@@ -21,6 +21,7 @@ router.post('/register', async (req, res) => {
   }
 
   const  salt = await bcryptjs.genSalt(5)
+  console.log(req.body.password)
   const  hashedPassword = await bcryptjs.hash(req.body.password,salt)
 // Code to register User
   const user = new User({
@@ -33,7 +34,7 @@ try {
   res.send(savedUser)
 }
   catch (err){
-    res.status(400).send({message:err})
+     res.status(400).send({message:err})
   }
 
 })
@@ -56,11 +57,10 @@ router.post('/login', async (req, res) =>{
   if(!passwordValidation){
     return res.status(400).send({message:"Password is wrong!"})
   }
-  res.send('Logged in!')
 
   //Generate an auth-token
-  const token = jsonwebtoken.sign({_id:user._id}, process.env.TOKEN_SECRET)
-  res.header('auth-token',token).send({'auth-token': token})
+  const token = jsonwebtoken.sign({_id:user._id, username:user.username}, process.env.TOKEN_SECRET)
+  res.header('auth-token',token).send({'auth-token': token} )
 
 })
 module.exports = router

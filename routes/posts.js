@@ -200,4 +200,23 @@ router.get('/category-expired',verifyToken, async (req, res) => {
         res.status(500).send({ message: err.message });
     }
 });
+router.get('/category-mostInteresting',verifyToken, async (req, res) => {
+    const user = req.user.username;
+    await updateAllPostsLiveStatus()
+    try {
+        const category = req.body.categories;
+
+        if (!category) {
+            return res.status(400).send({ message: "Category parameter is missing" });
+        }
+        const posts = await Post.find({ categories: category, isLive: true })
+            .sort({ like: -1, dislike: -1 }) // Sort in descending order based on like and dislike
+            .exec();
+
+        console.log(`${user} searched the most interesting post in ${category} category.`);
+        res.send(posts);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+});
 module.exports = router
